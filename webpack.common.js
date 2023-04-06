@@ -1,5 +1,6 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const globImporter = require('node-sass-glob-importer');
 const CopyPlugin = require("copy-webpack-plugin");
 const path = require("path");
 
@@ -21,17 +22,24 @@ module.exports = {
                 ],
             },
             {
-                test: /\.s[ac]ss$/i,
+                test: /\.(scss|sass)$/,
                 use: [
-                    // Creates `style` nodes from JS strings
-                    process.env.NODE_ENV !== "production"
-                        ? "style-loader"
-                        : MiniCssExtractPlugin.loader,
-                    // Translates CSS into CommonJS
-                    "css-loader",
-                    // Compiles Sass to CSS
-                    "sass-loader",
-                ],
+                    MiniCssExtractPlugin.loader,
+                    {
+                        loader: 'css-loader',
+                        options: {
+                            url: false
+                        }
+                    },
+                    {
+                        loader: "sass-loader",
+                        options: {
+                            sassOptions: {
+                                importer: globImporter()
+                            }
+                        }
+                    }
+                ]
             },
             {
                 test: /\.twig$/,
@@ -49,16 +57,17 @@ module.exports = {
         ]
     },
     resolve: {
-        extensions: ['.js', '.scss']
+        extensions: ['.js', '.scss'],
+        alias: {
+            'gsap': path.resolve(__dirname, './node_modules/gsap'),
+            'ScrollTrigger': path.resolve(__dirname, './node_modules/gsap/ScrollTrigger'),
+        }
     },
     plugins: [
+        new MiniCssExtractPlugin(),
         new HtmlWebpackPlugin({
             filename: 'index.html',
             template: './source/index.twig'
-        }),
-        new HtmlWebpackPlugin({
-            filename: 'about.html',
-            template: './source/pages/about.twig'
         }),
         new CopyPlugin({
             patterns: [

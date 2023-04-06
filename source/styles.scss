@@ -1,13 +1,5 @@
 //Styles
 //Base
-@import "assets/css/styles/base/base";
-//Pages
-
-//Variables
-@import "assets/css/variables/colors";
-
-//Components
-//Atoms
-//Molecules
-@import "assets/css/components/molecules/navigation";
-//Organisms
+@import "assets/css/components/**/*.scss";
+@import "assets/css/styles/**/*.scss";
+@import "assets/css/variables/*.scss";
